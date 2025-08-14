@@ -1,0 +1,38 @@
+You are a senior AI engineer tasked with finishing a .NET MAUI + Python video generation project. The Python backend skeleton already exists:
+
+- backend/main.py → FastAPI server with /generate endpoint
+- scripts/generate.py → frame-by-frame video generation stub, including a placeholder `try_animatediff_framegen(...)`
+
+Current status:
+- `try_animatediff_framegen(...)` is partially implemented for `guoyww/AnimateDiff` pipeline (AnimateDiffPipeline + MotionAdapter)
+- Fallback SD img2img generator is working
+- FFmpeg frame assembly is implemented
+
+Tasks:
+
+1. Fully implement `try_animatediff_framegen(...)` so that:
+   - It uses AnimateDiff + FramePack (if FramePack is installed) to generate video frames from a prompt and optional input image.
+   - Supports user-specified number of frames, resolution, guidance, and steps.
+   - Saves frames in the directory passed (`frames_dir`) with names frame_0000.png … frame_NNNN.png.
+   - Uses FP16 when CUDA is available and gracefully falls back to CPU if not.
+
+2. Integrate FramePack motion optimization:
+   - If FramePack is installed, feed the AnimateDiff pipeline frames through FramePack to improve temporal consistency and smooth motion.
+
+3. Ensure error handling:
+   - If AnimateDiff or FramePack is missing, fallback to SD img2img frame-by-frame generator.
+   - Log clear messages for missing packages, missing models, or runtime errors.
+
+4. Confirm compatibility with FastAPI backend:
+   - `/generate` endpoint must be able to call `scripts/generate.py` and receive an MP4 video output.
+   - Maintain temp folders for frames and clean up after assembly.
+
+5. Optional enhancements:
+   - Allow user to pass a random seed.
+   - Allow user to specify FPS (frames per second).
+   - Allow logging of generation progress (print statements or progress bar).
+
+Deliverable:
+- Fully working `scripts/generate.py` ready to produce 5–10 second 720p videos using AnimateDiff + FramePack locally.
+- Maintain fallback path using diffusers SD img2img generator if AnimateDiff/FramePack are missing.
+- Keep code modular so future AI models can be swapped in easily.
